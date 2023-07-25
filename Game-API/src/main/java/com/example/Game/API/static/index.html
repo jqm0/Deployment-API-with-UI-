@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Player Management App</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<script src="./dataFetch.js"></script>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- Form -->
+            <form id="createPlayerForm" class="card p-4">
+                <h4 class="mb-4">Add Player</h4>
+                <div class="form-group">
+                    <label for="playerName">Name:</label>
+                    <input type="text" class="form-control" id="playerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="playerId">ID:</label>
+                    <input type="text" class="form-control" id="playerId" required>
+                </div>
+                <div class="form-group">
+                    <label for="playerScore">Score:</label>
+                    <input type="number" class="form-control" id="playerScore" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Player</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Card to display player information -->
+    <div class="row mt-5" id="playerCardRow">
+    </div>
+</div>
+
+<!-- Add Bootstrap JS and jQuery links -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- JavaScript code to handle form submission and actions -->
+<script>
+        $(document).ready(function() {
+            // Function to handle form submission
+            $("#createPlayerForm").submit(function(event) {
+                event.preventDefault();
+                var playerName = $("#playerName").val();
+                var playerId = $("#playerId").val();
+                var playerScore = $("#playerScore").val();
+
+                // Create the card to display the player information with buttons
+                var card = `
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Name: ${playerName}</h5>
+                                <p class="card-text">ID: ${playerId}</p>
+                                <p class="card-text">Score: ${playerScore}</p>
+                                <button class="btn btn-danger" onclick="deletePlayer('${playerId}', this)">Delete</button>
+                                <button class="btn btn-info" onclick="updatePlayer('${playerId}', '${playerName}', ${playerScore})">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Append the card to the playerCardRow div
+                $("#playerCardRow").append(card);
+
+                // Clear the form inputs after submission
+                $("#playerName").val("");
+                $("#playerId").val("");
+                $("#playerScore").val("");
+            });
+
+            // Function to handle player deletion
+            function deletePlayer(playerId, button) {
+                $.ajax({
+                    url: `/api/v1/player/${playerId}`,
+                    type: "DELETE",
+                    success: function() {
+                        $(button).closest(".card").remove();
+                    }
+                });
+            }
+
+            // Function to handle player update (just an example, you may implement a modal for updating)
+            function updatePlayer(playerId, playerName, playerScore) {
+                // Here, you can use AJAX to update the player information in your API
+                // For this example, we'll just display an alert
+                alert(`Updating player: ${playerName}, ID: ${playerId}, Score: ${playerScore}`);
+            }
+        });
+    </script>
+<script src="./static/js/dataFetch.js"></script>
+</body>
+</html>
